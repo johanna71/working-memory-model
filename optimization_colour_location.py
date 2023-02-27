@@ -17,7 +17,7 @@ NF = 0 # to be specified after loading image in vgg16
 NF_used = 0 # to be specified later
 #test 1 for colour
 #test 5 for location
-images_path='images/test/test5/'
+images_path='images/test/test1/'
 
 image_11=extract_features(images_path + 'circle_blue.jpg')
 image_12=extract_features(images_path + 'circle_green.jpg')

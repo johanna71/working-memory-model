@@ -281,22 +281,6 @@ def single_trial(M,I,S,probe):
     S.win_feature = win_feature[0]             # (oh good)
     
   ########################################################################   
-  
-  circles = [0,1,2,3,4]
-  rects = [5,6,7,8,9]
-  stars = [10,11,12,13,14]
-  triangles=[15,16,17,18,19] 
-  j=0
-  for j in range(5):
-    if circles[j] == probe:
-      target_array = circles
-    elif rects[j] == probe:
-      target_array = rects
-    elif stars[j] == probe:
-      target_array = stars
-    elif triangles[j] == probe:
-      target_array = triangles
-      
   wh=sum(I.durations) - 150          
   final_array = S.F_t[wh]
   threshold_compare = 0.190
@@ -305,22 +289,21 @@ def single_trial(M,I,S,probe):
   final_array[final_array >= threshold_compare] = 1
   
     
-  dot_array = zeros(5)
+  dot_array = zeros(20)
   i=0
-  for i in range(5):
-    compare = array_stimulus[:,target_array[i]]
+  for i in range(20):
+    compare = array_stimulus[:,i]
     compare[compare < threshold ] = 0
     compare[compare >= threshold ] = 1
     dot_array[i]= dot(final_array, compare)
     
   maxim = argmax(dot_array)
-  if probe == target_array[maxim]:
+  if probe == maxim:
     isittrue = True 
   else:
     isittrue = False 
 
   return  isittrue,S  
-      
 ############################################################
 
 def initialise_state(M):
@@ -375,12 +358,8 @@ def main_test_set_size():
   n_t = 20 # number of trials per number of presented items
   n_tr = 10 # number of test runs
   all = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
-  circles = [0,1,2,3,4]
-  rects = [5,6,7,8,9]
-  stars = [10,11,12,13,14]
-  triangles=[15,16,17,18,19]
   accuracy_=zeros([4,n_tr])
-  accuracy_mooney_=zeros([4,n_tr])
+  accuracy_complex_=zeros([4,n_tr])
     
 ####### test for one presented items #######
   i=0
@@ -413,24 +392,15 @@ def main_test_set_size():
     # get random number from all, find in which shape specific list the index also occurs, copy (rects_local=rects, remove idx from rects_local), take second random number from this
     j=0
     while j<n_t:
-        a=random.choice(all)
-        k=0
-        for k in range(5):
-          if circles[k] == a:
-            target_array = circles
-          elif rects[k] == a:
-            target_array = rects
-          elif stars[k] == a:
-            target_array = stars
-          elif triangles[k] == a:
-            target_array = triangles       
-        b= random.choice(target_array)
+        a=random.choice(all)     
+        b= random.choice(all)
         while b==a:
-          b= random.choice(target_array)
+          b= random.choice(all)
         c=random.choice([a,b])
         (M,I) = setup_model_new([a,b],c)  # create Model and Input
         S     = initialise_state(M) # initialise the state of the units
         isittrue,S     = single_trial(M,I,S,c)
+        #display_result(S)
         if c < 10:
           trials[1] += 1
         else:
@@ -447,23 +417,13 @@ def main_test_set_size():
     
     j=0
     while j<n_t:
-        a=random.choice(all)
-        k=0
-        for k in range(5):
-          if circles[k] == a:
-            target_array = circles
-          elif rects[k] == a:
-            target_array = rects
-          elif stars[k] == a:
-            target_array = stars
-          elif triangles[k] == a:
-            target_array = triangles       
-        b= random.choice(target_array)
+        a=random.choice(all)     
+        b= random.choice(all)
         while b==a:
-          b= random.choice(target_array)
-        c= random.choice(target_array)  
+          b= random.choice(all)
+        c= random.choice(all)  
         while c==a or c==b:
-          c= random.choice(target_array)        
+          c= random.choice(all)        
         d=random.choice([a,b,c])
         (M,I) = setup_model_new([a,b,c],d)  # create Model and Input
         S     = initialise_state(M) # initialise the state of the units
@@ -483,26 +443,16 @@ def main_test_set_size():
     j=0
     while j<n_t:
 
-        a=random.choice(all)
-        k=0
-        for k in range(5):
-          if circles[k] == a:
-            target_array = circles
-          elif rects[k] == a:
-            target_array = rects
-          elif stars[k] == a:
-            target_array = stars
-          elif triangles[k] == a:
-            target_array = triangles       
-        b= random.choice(target_array)
+        a=random.choice(all)      
+        b= random.choice(all)
         while b==a:
-          b= random.choice(target_array)
-        c= random.choice(target_array)  
+          b= random.choice(all)
+        c= random.choice(all)  
         while c==a or c==b:
-          c= random.choice(target_array)   
-        d= random.choice(target_array)  
+          c= random.choice(all)   
+        d= random.choice(all)  
         while d==a or d==b or d ==c:
-          d= random.choice(target_array)   
+          d= random.choice(all)   
         e=random.choice([a,b,c,d])
         (M,I) = setup_model_new([a,b,c,d],e)  # create Model and Input
         S     = initialise_state(M) # initialise the state of the units
@@ -525,27 +475,28 @@ def main_test_set_size():
     accuracy_[1,i]=right_answers[1]/trials[1]
     accuracy_[2,i]=right_answers[2]/trials[2]
     accuracy_[3,i]=right_answers[3]/trials[3]
-    accuracy_mooney_[0,i]=right_answers[4]/trials[4]
-    accuracy_mooney_[1,i]=right_answers[5]/trials[5]
-    accuracy_mooney_[2,i]=right_answers[6]/trials[6]
-    accuracy_mooney_[3,i]=right_answers[7]/trials[7]
+    accuracy_complex_[0,i]=right_answers[4]/trials[4]
+    accuracy_complex_[1,i]=right_answers[5]/trials[5]
+    accuracy_complex_[2,i]=right_answers[6]/trials[6]
+    accuracy_complex_[3,i]=right_answers[7]/trials[7]
     i +=1
 
   accuracy= mean(accuracy_,axis=1)
-  accuracy_mooney= mean(accuracy_mooney_,axis=1)
+  accuracy_complex= mean(accuracy_complex_,axis=1)
 
   standard_error = zeros(4)
-  standard_error_mooney = zeros(4)
+  standard_error_complex = zeros(4)
   
   standard_error[0] = std(accuracy_[0]) / sqrt(len(accuracy_[0])) 
   standard_error[1] = std(accuracy_[1]) / sqrt(len(accuracy_[1]))
   standard_error[2] = std(accuracy_[2]) / sqrt(len(accuracy_[2])) 
   standard_error[3] = std(accuracy_[3]) / sqrt(len(accuracy_[3]))
-  standard_error_mooney[0] = std(accuracy_mooney_[0]) / sqrt(len(accuracy_mooney_[0])) 
-  standard_error_mooney[1] = std(accuracy_mooney_[1]) / sqrt(len(accuracy_mooney_[1]))
-  standard_error_mooney[2] = std(accuracy_mooney_[2]) / sqrt(len(accuracy_mooney_[2])) 
-  standard_error_mooney[3] = std(accuracy_mooney_[3]) / sqrt(len(accuracy_mooney_[3]))
-  display_accuracy(accuracy,accuracy_mooney,standard_error,standard_error_mooney)
+  standard_error_complex[0] = std(accuracy_complex_[0]) / sqrt(len(accuracy_complex_[0])) 
+  standard_error_complex[1] = std(accuracy_complex_[1]) / sqrt(len(accuracy_complex_[1]))
+  standard_error_complex[2] = std(accuracy_complex_[2]) / sqrt(len(accuracy_complex_[2])) 
+  standard_error_complex[3] = std(accuracy_complex_[3]) / sqrt(len(accuracy_complex_[3]))
+  display_accuracy(accuracy,accuracy_complex,standard_error,standard_error_complex)
+
 
 def __main__():
   main_test_set_size()
